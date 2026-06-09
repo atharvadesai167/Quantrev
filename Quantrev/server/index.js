@@ -35,7 +35,11 @@ app.post("/api/ai", async (req, res) => {
         prompt.toLowerCase().includes("bug") ||
         prompt.toLowerCase().includes("error") ||
         prompt.toLowerCase().includes("debug") ||
-        prompt.toLowerCase().includes("explain")
+        prompt.toLowerCase().includes("explain") ||
+        prompt.toLowerCase().includes("wrong") ||
+        prompt.toLowerCase().includes("why")
+
+
       );
 
     let messages;
