@@ -9,7 +9,7 @@ import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <div className="min-h-screen bg-white bg-[radial-gradient(#d4d4d8_1px,transparent_1px)] bg-size:[24px_24px]">
+    <div className="min-h-screen bg-white bg-[radial-gradient(#d4d4d8_1px,transparent_1px)] [background-size:24px_24px]">
       <Navbar />
 
       <Routes>
