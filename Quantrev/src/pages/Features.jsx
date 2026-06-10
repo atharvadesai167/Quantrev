@@ -78,16 +78,16 @@ export default function Features() {
               lg:text-[10rem]
             "
           >
-            <HoverText text="DEBUG." />
-            <HoverText text="EXPLAIN." />
-            <HoverText text="OPTIMIZE." />
+            <HoverText text="DEBUG" />
+            <HoverText text="EXPLAIN" />
+            <HoverText text="OPTIMIZE" />
           </motion.div>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="mt-10 max-w-xl mx-auto text-lg text-black/60"
+            className="mt-10 max-w-3xl text-3xl md:text-3xl mx-auto text-black/60 leading-relaxed"
           >
             Quantrev AI transforms the way developers analyze, debug,
             understand, fix, and optimize code.
@@ -103,7 +103,7 @@ export default function Features() {
           viewport={{ once: true }}
         >
           <HoverText
-            text="THREE SYSTEMS."
+            text="THREE SYSTEMS"
             className="
               font-black
               tracking-tight
@@ -115,7 +115,7 @@ export default function Features() {
           />
 
           <HoverText
-            text="ONE ENGINE."
+            text="ONE ENGINE"
             className="
               font-black
               tracking-tight
@@ -202,7 +202,7 @@ export default function Features() {
 
           <div>
             <HoverText
-              text="BUILD FASTER."
+              text="BUILD FASTER"
               className="
                 font-black
                 text-[3rem]
@@ -213,7 +213,7 @@ export default function Features() {
             />
 
             <HoverText
-              text="SHIP SMARTER."
+              text="DETECT SMARTER"
               className="
                 font-black
                 text-[3rem]
