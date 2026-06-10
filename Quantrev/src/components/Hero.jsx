@@ -8,7 +8,7 @@ export default function Hero() {
     <section className="min-h-screen flex flex-col items-center justify-center px-6">
       
       <BlurText
-        text="Quantrev AI"
+        text="QUANTREV AI"
         delay={150}
         animateBy="letters"
         direction="top"
