@@ -2,8 +2,21 @@ import { motion } from "framer-motion";
 
 export default function About() {
   return (
-    <section className="w-full min-h-screen flex items-center justify-center px-10 py-20 bg-white text-black">
-      
+    <section
+      className="
+      w-full
+      min-h-screen
+      flex
+      items-center
+      justify-center
+      px-10
+      py-20
+      bg-white
+      text-black
+      [background-image:linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)]
+      [background-size:72px_72px]
+      "
+    >
       <div className="max-w-6xl w-full flex flex-col md:flex-row items-center gap-16">
 
         {/* LEFT - ABOUT TEXT */}
