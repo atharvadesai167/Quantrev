@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
   res.send("Quantrev AI Backend Running 🚀");
 });
 
-// 🤖 MAIN AI ROUTE
+// MAIN AI ROUTE
 app.post("/api/ai", async (req, res) => {
   try {
     const { code, prompt } = req.body;
@@ -26,7 +26,7 @@ app.post("/api/ai", async (req, res) => {
       });
     }
 
-    // 🧠 DETECT IF USER IS TALKING ABOUT CODE OR JUST CHATTING
+    // DETECT IF USER IS TALKING ABOUT CODE OR JUST CHATTING
     const isCodeMode =
       code &&
       code.length > 20 &&
@@ -36,8 +36,7 @@ app.post("/api/ai", async (req, res) => {
         prompt.toLowerCase().includes("error") ||
         prompt.toLowerCase().includes("debug") ||
         prompt.toLowerCase().includes("explain") ||
-        prompt.toLowerCase().includes("wrong") ||
-        prompt.toLowerCase().includes("why")
+        prompt.toLowerCase().includes("wrong")
 
 
       );
@@ -45,7 +44,7 @@ app.post("/api/ai", async (req, res) => {
     let messages;
 
     if (isCodeMode) {
-      // 💻 CODE DEBUGGING MODE
+      // CODE DEBUGGING MODE
       messages = [
         {
           role: "system",
@@ -58,7 +57,7 @@ app.post("/api/ai", async (req, res) => {
         }
       ];
     } else {
-      // 💬 NORMAL CHAT MODE
+      // NORMAL CHAT MODE
       messages = [
         {
           role: "system",
@@ -95,7 +94,7 @@ app.post("/api/ai", async (req, res) => {
     });
 
   } catch (error) {
-    console.log("❌ AI ERROR:", error?.response?.data || error.message);
+    console.log("AI ERROR:", error?.response?.data || error.message);
 
     res.status(500).json({
       error: "AI request failed"
@@ -103,7 +102,7 @@ app.post("/api/ai", async (req, res) => {
   }
 });
 
-// 🚀 START SERVER
+//  START SERVER
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
 });
