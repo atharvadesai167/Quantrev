@@ -6,12 +6,12 @@ export default function About() {
     <div className="relative min-h-[600vh] bg-black text-white overflow-hidden">
 
       {/* ARC REACTOR */}
-      <div className="fixed inset-0 z-0">
+      <div className="fixed inset-0 z-0 pointer-events-none">
         <ArcReactor />
       </div>
 
       {/* OVERLAY */}
-      <div className="fixed inset-0 bg-black/20 z-10" />
+      <div className="fixed inset-0 bg-black/20 z-10 pointer-events-none" />
 
       {/* CONTENT */}
       <div className="relative z-20">
@@ -158,11 +158,8 @@ export default function About() {
             <div className="space-y-6 text-center text-3xl md:text-5xl font-black">
 
               <div>MEMORY ENGINE</div>
-
               <div>PROJECT CONTEXT</div>
-
               <div>MULTI FILE ANALYSIS</div>
-
               <div>REPOSITORY UNDERSTANDING</div>
 
             </div>
