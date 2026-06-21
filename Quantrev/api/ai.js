@@ -1,34 +1,20 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
 import axios from "axios";
 
-dotenv.config();
+export default async function handler(
+  req,
+  res
+) {
 
-const app = express();
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
+  }
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173"
-    ]
-  })
-);
-
-app.use(express.json());
-
-
-// TEST ROUTE
-app.get("/", (req, res) => {
-  res.send("Quantrev AI Backend Running 🚀");
-});
-
-
-// MAIN AI ROUTE
-app.post("/api/ai", async (req, res) => {
   try {
 
-    const { code, prompt } = req.body;
+    const { code, prompt } =
+      req.body;
 
     if (!prompt) {
       return res.json({
@@ -39,7 +25,6 @@ app.post("/api/ai", async (req, res) => {
     const lowerPrompt =
       prompt.toLowerCase();
 
-    // DETECT CODE MODE
     const isCodeMode =
       code &&
       code.length > 20 &&
@@ -54,7 +39,7 @@ app.post("/api/ai", async (req, res) => {
 
     let messages;
 
-    // CODE DEBUGGING MODE
+    // CODE MODE
     if (isCodeMode) {
 
       messages = [
@@ -85,7 +70,7 @@ ${prompt}`
         {
           role: "system",
           content:
-            "You are Quantrev AI, a helpful and intelligent AI assistant. Reply naturally and clearly."
+            "You are Quantrev AI, a helpful and intelligent AI assistant."
         },
 
         {
@@ -118,11 +103,13 @@ ${prompt}`
       );
 
     const aiResponse =
-      response?.data?.choices?.[0]?.message?.content;
+      response?.data?.choices?.[0]
+      ?.message?.content;
 
-    res.json({
+    return res.status(200).json({
       result:
-        aiResponse || "No response."
+        aiResponse ||
+        "No response"
     });
 
   }
@@ -130,29 +117,14 @@ ${prompt}`
   catch (error) {
 
     console.log(
-      "AI ERROR:",
       error?.response?.data ||
       error.message
     );
 
-    res.status(500).json({
+    return res.status(500).json({
       error:
         "AI request failed"
     });
 
   }
-});
-
-
-// IMPORTANT FOR RENDER
-const PORT =
-  process.env.PORT || 5000;
-
-
-app.listen(PORT, () => {
-
-  console.log(
-    `Server running on port ${PORT}`
-  );
-
-});
+}

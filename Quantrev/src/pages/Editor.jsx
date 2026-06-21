@@ -71,8 +71,9 @@ function hello() {
     setLoading(true);
 
     try {
+
       const res = await fetch(
-        "http://localhost:5000/api/ai",
+        "/api/ai",
         {
           method: "POST",
           headers: {
@@ -88,7 +89,8 @@ function hello() {
       const data = await res.json();
 
       const aiResponse =
-        data?.result || "⚠️ No response from AI";
+        data?.result ||
+        "⚠️ No response from AI";
 
       setConversations((prev) =>
         prev.map((chat) =>
@@ -112,7 +114,9 @@ function hello() {
       );
 
       setPrompt("");
+
     } catch (err) {
+
       console.error(err);
 
       setConversations((prev) =>
@@ -134,8 +138,11 @@ function hello() {
       );
 
       setPrompt("");
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
@@ -148,19 +155,19 @@ function hello() {
           setSidebarOpen(!sidebarOpen)
         }
         className="
-          absolute
-          top-4
-          left-4
-          z-50
-          border
-          border-black/20
-          bg-white
-          px-3
-          py-2
-          rounded-lg
-          hover:bg-black
-          hover:text-white
-          transition
+        absolute
+        top-4
+        left-4
+        z-50
+        border
+        border-black/20
+        bg-white
+        px-3
+        py-2
+        rounded-lg
+        hover:bg-black
+        hover:text-white
+        transition
         "
       >
         ☰
@@ -169,65 +176,70 @@ function hello() {
       {/* SIDEBAR */}
       <div
         className={`
-          ${
-            sidebarOpen
-              ? "w-64"
-              : "w-0"
-          }
-          overflow-hidden
-          transition-all
-          duration-300
-          border-r
-          border-black/10
-          flex
-          flex-col
-          bg-white
+        ${
+          sidebarOpen
+            ? "w-64"
+            : "w-0"
+        }
+        overflow-hidden
+        transition-all
+        duration-300
+        border-r
+        border-black/10
+        flex
+        flex-col
+        bg-white
         `}
       >
         <div className="p-4 mt-14">
+
           <button
             onClick={createNewChat}
             className="
-              w-full
-              border
-              border-black/20
-              rounded-xl
-              p-3
-              hover:bg-black
-              hover:text-white
-              transition
+            w-full
+            border
+            border-black/20
+            rounded-xl
+            p-3
+            hover:bg-black
+            hover:text-white
+            transition
             "
           >
             + New Chat
           </button>
+
         </div>
 
         <div className="flex-1 overflow-y-auto">
+
           {conversations.map((chat) => (
+
             <div
               key={chat.id}
               className={`
-                flex
-                items-center
-                justify-between
-                p-4
-                border-b
-                border-black/5
-                ${
-                  activeChat === chat.id
-                    ? "bg-black/5"
-                    : ""
-                }
+              flex
+              items-center
+              justify-between
+              p-4
+              border-b
+              border-black/5
+              ${
+                activeChat === chat.id
+                  ? "bg-black/5"
+                  : ""
+              }
               `}
             >
+
               <button
                 onClick={() =>
                   setActiveChat(chat.id)
                 }
                 className="
-                  flex-1
-                  text-left
-                  truncate
+                flex-1
+                text-left
+                truncate
                 "
               >
                 {chat.title}
@@ -238,20 +250,25 @@ function hello() {
                   deleteChat(chat.id)
                 }
                 className="
-                  ml-2
-                  text-red-500
-                  hover:opacity-60
+                ml-2
+                text-red-500
+                hover:opacity-60
                 "
               >
                 ✕
               </button>
+
             </div>
+
           ))}
+
         </div>
       </div>
 
       {/* EDITOR */}
+
       <div className="w-1/2 flex flex-col">
+
         <div className="p-4 border-b border-black/10">
           <h2 className="text-sm font-semibold">
             Code Editor
@@ -259,6 +276,7 @@ function hello() {
         </div>
 
         <div className="flex-1">
+
           <EditorMonaco
             height="100%"
             language="javascript"
@@ -268,14 +286,17 @@ function hello() {
             }
             theme="vs-light"
           />
+
         </div>
+
       </div>
 
-      {/* DIVIDER */}
       <div className="w-px bg-black/10"></div>
 
       {/* AI PANEL */}
+
       <div className="w-1/2 flex flex-col">
+
         <div className="p-4 border-b border-black/10">
           <h2 className="text-sm font-semibold">
             Quantrev AI
@@ -283,17 +304,21 @@ function hello() {
         </div>
 
         <div className="flex-1 p-4 overflow-y-auto">
+
           {currentChat?.messages.length === 0 ? (
             <div className="text-black/40">
               Start a conversation...
             </div>
           ) : (
+
             currentChat.messages.map(
               (msg, index) => (
+
                 <div
                   key={index}
                   className="mb-8"
                 >
+
                   <div className="font-semibold mb-2">
                     You
                   </div>
@@ -309,6 +334,7 @@ function hello() {
                   <div className="whitespace-pre-wrap">
                     {msg.response}
                   </div>
+
                 </div>
               )
             )
@@ -319,21 +345,23 @@ function hello() {
               Thinking... 🤖
             </div>
           )}
+
         </div>
 
-        {/* INPUT */}
         <div className="p-4">
+
           <div
             className="
-              flex
-              items-center
-              border
-              border-black/20
-              rounded-2xl
-              px-4
-              py-3
+            flex
+            items-center
+            border
+            border-black/20
+            rounded-2xl
+            px-4
+            py-3
             "
           >
+
             <input
               type="text"
               value={prompt}
@@ -348,7 +376,7 @@ function hello() {
                   askAI();
                 }
               }}
-              placeholder="Ask AI to debug your code..."
+              placeholder="Ask AI..."
               className="w-full outline-none"
             />
 
@@ -356,18 +384,22 @@ function hello() {
               onClick={askAI}
               disabled={loading}
               className="
-                ml-3
-                text-sm
-                font-medium
-                hover:opacity-60
-                disabled:opacity-40
+              ml-3
+              text-sm
+              font-medium
+              hover:opacity-60
+              disabled:opacity-40
               "
             >
               {loading ? "..." : "Ask"}
             </button>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 }
