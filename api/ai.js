@@ -8,16 +8,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { code, prompt } = req.body || {};
+    const { code = "", prompt = "" } = req.body || {};
 
-    if (!prompt) {
+    if (!prompt.trim()) {
       return res.status(200).json({
         result: "Say something 😊"
       });
     }
 
-    // ✅ IMPORTANT: check API key early
+    // 🔐 CHECK API KEY
     if (!process.env.GROQ_API_KEY) {
+      console.error("GROQ_API_KEY missing in environment variables");
+
       return res.status(500).json({
         error: "Server misconfiguration: GROQ_API_KEY missing"
       });
@@ -37,38 +39,31 @@ export default async function handler(req, res) {
         lowerPrompt.includes("wrong")
       );
 
-    let messages;
+    const messages = isCodeMode
+      ? [
+          {
+            role: "system",
+            content:
+              "You are a senior software engineer. You debug code clearly and return corrected code when needed."
+          },
+          {
+            role: "user",
+            content: `Code:\n${code}\n\nTask:\n${prompt}`
+          }
+        ]
+      : [
+          {
+            role: "system",
+            content:
+              "You are Quantrev AI, a helpful, smart and concise assistant."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ];
 
-    // CODE MODE
-    if (isCodeMode) {
-      messages = [
-        {
-          role: "system",
-          content:
-            "You are a senior software engineer. Help debug code, explain issues clearly, and provide corrected code."
-        },
-        {
-          role: "user",
-          content: `Code:\n\n${code}\n\nTask:\n\n${prompt}`
-        }
-      ];
-    }
-
-    // NORMAL MODE
-    else {
-      messages = [
-        {
-          role: "system",
-          content:
-            "You are Quantrev AI, a helpful and intelligent AI assistant."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ];
-    }
-
+    // 🤖 CALL GROQ
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -81,25 +76,28 @@ export default async function handler(req, res) {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
           "Content-Type": "application/json"
         },
-        timeout: 15000
+        timeout: 20000
       }
     );
 
-    const aiResponse =
-      response?.data?.choices?.[0]?.message?.content;
+    const aiResponse = response?.data?.choices?.[0]?.message?.content;
+
+    if (!aiResponse) {
+      return res.status(500).json({
+        error: "AI returned empty response"
+      });
+    }
 
     return res.status(200).json({
-      result: aiResponse || "No response from AI"
+      result: aiResponse
     });
 
   } catch (error) {
-    console.log("AI ERROR:", error?.response?.data || error.message);
+    console.error("AI ERROR:", error?.response?.data || error.message);
 
     return res.status(500).json({
-      error:
-        error?.response?.data?.error?.message ||
-        error.message ||
-        "AI request failed"
+      error: "AI request failed",
+      details: error?.response?.data || error.message
     });
   }
 }
