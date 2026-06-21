@@ -7,39 +7,46 @@ dotenv.config();
 
 const app = express();
 
+/* ------------------ MIDDLEWARE ------------------ */
+
+// Allow all origins (safe for dev + simple production setup)
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173"
-    ]
+    origin: "*"
   })
 );
 
 app.use(express.json());
 
+/* ------------------ HEALTH CHECK ------------------ */
 
-// TEST ROUTE
 app.get("/", (req, res) => {
-  res.send("Quantrev AI Backend Running 🚀");
+  res.json({
+    status: "Quantrev AI Backend Running 🚀"
+  });
 });
 
+/* ------------------ AI ROUTE ------------------ */
 
-// MAIN AI ROUTE
 app.post("/api/ai", async (req, res) => {
   try {
-
-    const { code, prompt } = req.body;
+    const { prompt, code } = req.body || {};
 
     if (!prompt) {
-      return res.json({
+      return res.status(200).json({
         result: "Say something 😊"
       });
     }
 
-    const lowerPrompt =
-      prompt.toLowerCase();
+    // Safety check for API key
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(500).json({
+        error: "Missing GROQ_API_KEY in environment variables"
+      });
+    }
 
-    // DETECT CODE MODE
+    const lowerPrompt = prompt.toLowerCase();
+
     const isCodeMode =
       code &&
       code.length > 20 &&
@@ -54,105 +61,79 @@ app.post("/api/ai", async (req, res) => {
 
     let messages;
 
-    // CODE DEBUGGING MODE
+    /* ------------------ CODE MODE ------------------ */
     if (isCodeMode) {
-
       messages = [
         {
           role: "system",
           content:
-            "You are a senior software engineer. Help debug code, explain issues clearly, and provide corrected code."
+            "You are a senior software engineer. Debug code clearly and provide fixed solutions."
         },
-
         {
           role: "user",
-          content: `Code:
-
-${code}
-
-Task:
-
-${prompt}`
+          content: `Code:\n\n${code}\n\nTask:\n\n${prompt}`
         }
       ];
-
     }
 
-    // NORMAL CHAT MODE
+    /* ------------------ NORMAL MODE ------------------ */
     else {
-
       messages = [
         {
           role: "system",
           content:
-            "You are Quantrev AI, a helpful and intelligent AI assistant. Reply naturally and clearly."
+            "You are Quantrev AI, a helpful, intelligent assistant that responds clearly and naturally."
         },
-
         {
           role: "user",
           content: prompt
         }
       ];
-
     }
 
-    const response =
-      await axios.post(
-        "https://api.groq.com/openai/v1/chat/completions",
+    /* ------------------ GROQ REQUEST ------------------ */
 
-        {
-          model: "llama-3.1-8b-instant",
-          messages,
-          temperature: 0.5
+    const response = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama-3.1-8b-instant",
+        messages,
+        temperature: 0.5
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
         },
-
-        {
-          headers: {
-            Authorization:
-              `Bearer ${process.env.GROQ_API_KEY}`,
-
-            "Content-Type":
-              "application/json"
-          }
-        }
-      );
+        timeout: 15000
+      }
+    );
 
     const aiResponse =
       response?.data?.choices?.[0]?.message?.content;
 
-    res.json({
-      result:
-        aiResponse || "No response."
+    return res.status(200).json({
+      result: aiResponse || "No response from AI"
     });
 
-  }
-
-  catch (error) {
-
+  } catch (error) {
     console.log(
       "AI ERROR:",
-      error?.response?.data ||
-      error.message
+      error?.response?.data || error.message
     );
 
-    res.status(500).json({
+    return res.status(500).json({
       error:
+        error?.response?.data?.error?.message ||
         "AI request failed"
     });
-
   }
 });
 
+/* ------------------ START SERVER ------------------ */
 
-// IMPORTANT FOR RENDER
-const PORT =
-  process.env.PORT || 5000;
-
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-
-  console.log(
-    `Server running on port ${PORT}`
-  );
-
+  console.log(`Server running on port ${PORT}`);
 });
